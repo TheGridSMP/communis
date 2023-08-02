@@ -1,0 +1,4 @@
+name: communis
+version: '${version}'
+main: the.grid.smp.communis.Communis
+api-version: '1.18'
