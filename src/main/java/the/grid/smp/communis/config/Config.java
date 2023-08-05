@@ -1,5 +1,6 @@
 package the.grid.smp.communis.config;
 
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -27,7 +28,12 @@ public class Config extends Serializeable {
             this.save();
         }
 
-        super.reload();
+        try {
+            ((YamlConfiguration) this.data).load(this.file);
+            super.reload();
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

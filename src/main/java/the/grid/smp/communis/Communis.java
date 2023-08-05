@@ -1,12 +1,23 @@
 package the.grid.smp.communis;
 
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import the.grid.smp.communis.listener.ArmorEquipListener;
 
-public final class Communis extends JavaPlugin {
+import java.util.logging.Logger;
+
+public final class Communis extends JavaPlugin implements Listener {
+
+    public static Logger LOGGER;
+
+    @Override
+    public void onLoad() {
+        LOGGER = this.getLogger();
+    }
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        this.getServer().getPluginManager().registerEvents(new ArmorEquipListener(), this);
     }
 
     @Override

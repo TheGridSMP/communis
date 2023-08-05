@@ -4,15 +4,16 @@ plugins {
 }
 
 group = "the.grid.smp"
-version = "1.1"
+version = "1.2"
 
 repositories {
     mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
 }
 
 publishing {

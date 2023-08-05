@@ -22,16 +22,7 @@ public abstract class Serializeable {
 
     public void reload() {
         try {
-            for (Field field : this.getClass().getDeclaredFields()) {
-                Entry entry = field.getAnnotation(Entry.class);
-
-                if (entry != null) {
-                    this.fields.add(ConfigField.of(
-                            new OwnedField(this, field), entry
-                    ));
-                }
-            }
-
+            this.updateIndexes();
             for (ConfigField field : this.fields) {
                 field.read(this.data);
             }
@@ -42,8 +33,27 @@ public abstract class Serializeable {
 
     public void save() {
         try {
+            this.updateIndexes();
             for (ConfigField field : this.fields) {
                 field.write(this.data);
+            }
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateIndexes() {
+        try {
+            if (this.fields.isEmpty()) {
+                for (Field field : this.getClass().getDeclaredFields()) {
+                    Entry entry = field.getAnnotation(Entry.class);
+
+                    if (entry != null) {
+                        this.fields.add(ConfigField.of(
+                                new OwnedField(this, field), entry
+                        ));
+                    }
+                }
             }
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();

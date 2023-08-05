@@ -1,10 +1,12 @@
 package the.grid.smp.communis.config;
 
 import org.bukkit.configuration.ConfigurationSection;
+import the.grid.smp.communis.Communis;
 import the.grid.smp.communis.reflection.OwnedField;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class ConfigField {
 
@@ -51,7 +53,14 @@ public class ConfigField {
 
         @Override
         public void read(ConfigurationSection data) throws ReflectiveOperationException {
-            this.field.set(data.getConfigurationSection(this.name).getValues(false));
+            ConfigurationSection section = data.getConfigurationSection(this.name);
+
+            if (section == null) {
+                Communis.LOGGER.log(Level.SEVERE, "Can't read " + this.name + " in " + data);
+                return;
+            }
+
+            this.field.set(section.getValues(false));
         }
     }
 
