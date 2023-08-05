@@ -25,29 +25,4 @@ public class Util {
 
         return EquipmentSlot.HEAD;
     }
-
-    public static <T extends Config> Collection<T> loadAll(Class<T> serializeable, File folder) {
-        if (!folder.isDirectory())
-            throw new IllegalArgumentException("File must be a folder");
-
-        Set<T> set = new HashSet<>();
-        File[] files = folder.listFiles((dir, name) -> name.endsWith(".yaml") || name.endsWith(".yml"));
-
-        if (files == null)
-            return set;
-
-        try {
-            Constructor<T> constructor = serializeable.getConstructor(
-                    File.class
-            );
-
-            for (File file : files) {
-                set.add(constructor.newInstance(file));
-            }
-        } catch (ReflectiveOperationException e) {
-            // never happens
-        }
-
-        return set;
-    }
 }
