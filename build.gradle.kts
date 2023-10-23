@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "the.grid.smp"
-version = "1.2-AMEND"
+version = "1.3-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -17,8 +17,20 @@ dependencies {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "GitHub"
+            url = uri("https://maven.pkg.github.com/TheGridSMP/communis")
+
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
+
     publications {
-        create<MavenPublication>("maven") {
+        register<MavenPublication>("maven") {
             artifactId = "communis"
             from(components["java"])
         }
