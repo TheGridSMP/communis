@@ -10,9 +10,11 @@ name: Gradle Package
 on:
   release:
     types: [created]
+  push:
+    tags: [v*.*]
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -38,3 +40,7 @@ jobs:
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: 'build/libs/*.jar'
