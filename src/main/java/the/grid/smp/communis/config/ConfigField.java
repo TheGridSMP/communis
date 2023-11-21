@@ -1,6 +1,9 @@
 package the.grid.smp.communis.config;
 
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 import the.grid.smp.communis.Communis;
 import the.grid.smp.communis.reflection.OwnedField;
 
@@ -18,6 +21,14 @@ public class ConfigField {
 
         if (type.isAssignableFrom(Serializeable.class)) {
             return new Struct(field, name);
+        }
+
+        if (type.isAssignableFrom(ItemStack.class)) {
+            return new Item(field, name);
+        }
+
+        if (type.isAssignableFrom(ReadWriteNBT.class)) {
+            return new Nbt(field, name);
         }
 
         return new ConfigField(field, name);
@@ -78,9 +89,14 @@ public class ConfigField {
 
         @Override
         public void read(ConfigurationSection data) throws ReflectiveOperationException {
-            this.field.set(
-                    this.constructor.newInstance(data.getConfigurationSection(this.name))
-            );
+            ConfigurationSection section = data.getConfigurationSection(this.name);
+
+            if (section == null) {
+                Communis.LOGGER.log(Level.SEVERE, "Can't read " + this.name + " in " + data);
+                return;
+            }
+
+            this.field.set(this.constructor.newInstance(section));
         }
 
         @Override
@@ -89,6 +105,54 @@ public class ConfigField {
             serializeable.save();
 
             data.set(this.name, serializeable.getData());
+        }
+    }
+
+    static class Item extends ConfigField {
+
+        private Item(OwnedField field, String name) {
+            super(field, name);
+        }
+
+        @Override
+        public void read(ConfigurationSection data) throws ReflectiveOperationException {
+            String raw = data.getString(this.name);
+
+            if (raw == null) {
+                Communis.LOGGER.log(Level.SEVERE, "Can't read " + this.name + " in " + data);
+                return;
+            }
+
+            this.field.set(NBT.itemStackFromNBT(NBT.parseNBT(raw)));
+        }
+
+        @Override
+        public void write(ConfigurationSection data) throws ReflectiveOperationException {
+            data.set(this.name, NBT.itemStackToNBT((ItemStack) this.field.get()));
+        }
+    }
+
+    static class Nbt extends ConfigField {
+
+        private Nbt(OwnedField field, String name) {
+            super(field, name);
+        }
+
+        @Override
+        public void read(ConfigurationSection data) throws ReflectiveOperationException {
+            String raw = data.getString(this.name);
+
+            if (raw == null) {
+                Communis.LOGGER.log(Level.SEVERE, "Can't read " + this.name + " in " + data);
+                return;
+            }
+
+            this.field.set(NBT.parseNBT(raw));
+        }
+
+        @Override
+        public void write(ConfigurationSection data) throws ReflectiveOperationException {
+            data.set(this.name, this.field.get().toString());
         }
     }
 }

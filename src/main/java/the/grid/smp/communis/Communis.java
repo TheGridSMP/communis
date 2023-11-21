@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 public final class Communis extends JavaPlugin implements Listener {
 
     public static Logger LOGGER;
+    private static Communis instance;
 
     @Override
     public void onLoad() {
         LOGGER = this.getLogger();
+        instance = this;
     }
 
     @Override
@@ -20,8 +22,7 @@ public final class Communis extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(new ArmorEquipListener(), this);
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
+    public static Communis getInstance() {
+        return instance;
     }
 }

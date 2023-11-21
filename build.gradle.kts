@@ -4,16 +4,17 @@ plugins {
 }
 
 group = "the.grid.smp"
-version = "1.3"
+version = "1.4"
 
 repositories {
     mavenCentral()
+    maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
+    compileOnly("de.tr7zw:item-nbt-api:2.12.1")
 }
 
 publishing {
@@ -27,6 +28,8 @@ publishing {
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
             }
         }
+
+        mavenLocal()
     }
 
     publications {
@@ -34,10 +37,6 @@ publishing {
             artifactId = "communis"
             from(components["java"])
         }
-    }
-
-    repositories {
-        mavenLocal()
     }
 }
 
