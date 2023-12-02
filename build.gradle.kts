@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
-    compileOnly("the.grid.smp:communis:1.5.2")
+    compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
 }
 
 publishing {
