@@ -10,18 +10,11 @@ repositories {
     mavenCentral()
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://repo.papermc.io/repository/maven-public/")
-
-    maven("https://maven.pkg.github.com/TheGridSMP/communis") {
-        credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
-        }
-    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
-    compileOnly("the.grid.smp:communis:1.5")
+
 }
 
 publishing {
