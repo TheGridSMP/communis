@@ -1,28 +1,28 @@
 package the.grid.smp.communis.util;
 
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import the.grid.smp.communis.config.Config;
-
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import the.grid.smp.communis.config.Deserializer;
+import the.grid.smp.communis.config.Serializer;
 
 public class Util {
 
-    public static EquipmentSlot slotFor(ItemStack stack) {
-        String type = stack.getType().toString();
+    public static ObjectMapper createMapper(Serializer<?>[] serializers, Deserializer<?>[] deserializers) {
+        SimpleModule module = new SimpleModule();
 
-        if (type.endsWith("_chestplate")){
-            return EquipmentSlot.CHEST;
-        } else if (type.endsWith("_leggings")){
-            return EquipmentSlot.LEGS;
-        } else if (type.endsWith("_boots")){
-            return EquipmentSlot.FEET;
+        if (serializers != null) {
+            for (Serializer<?> serializer : serializers) {
+                serializer.attach(module);
+            }
         }
 
-        return EquipmentSlot.HEAD;
+        if (deserializers != null) {
+            for (Deserializer<?> deserializer : deserializers) {
+                deserializer.attach(module);
+            }
+        }
+
+        return new ObjectMapper(new YAMLFactory()).registerModule(module);
     }
 }

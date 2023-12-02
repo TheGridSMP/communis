@@ -1,14 +1,15 @@
 package the.grid.smp.communis.config;
 
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bukkit.plugin.Plugin;
+import the.grid.smp.communis.util.Util;
 
 import java.io.File;
 import java.io.IOException;
 
-public class Config extends Serializeable {
+public abstract class Config {
 
+    private final ObjectMapper mapper;
     private final File file;
 
     public Config(Plugin plugin, String name) {
@@ -18,29 +19,28 @@ public class Config extends Serializeable {
     }
 
     public Config(File file) {
-        super(new YamlConfiguration());
         this.file = file;
+        this.mapper = Util.createMapper(this.serializers(), this.deserializers());
     }
 
-    @Override
+    public Serializer<?>[] serializers() { return null; }
+    public Deserializer<?>[] deserializers() { return null; }
+
     public void reload() {
         if (!this.file.exists()) {
             this.save();
         }
 
         try {
-            ((YamlConfiguration) this.data).load(this.file);
-            super.reload();
-        } catch (IOException | InvalidConfigurationException e) {
+            this.mapper.readValue(this.file, this.getClass());
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
     public void save() {
         try {
-            super.save();
-            ((YamlConfiguration) this.data).save(this.file);
+            this.mapper.writeValue(this.file, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
