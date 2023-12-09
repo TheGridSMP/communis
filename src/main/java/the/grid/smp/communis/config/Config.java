@@ -27,11 +27,11 @@ public abstract class Config {
     public Deserializer<?>[] deserializers() { return null; }
 
     public void reload() {
-        if (!this.file.exists()) {
-            this.save();
-        }
-
         try {
+            if (!this.file.exists()) {
+                this.save();
+            }
+
             this.mapper.readValue(this.file, this.getClass());
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,6 +40,7 @@ public abstract class Config {
 
     public void save() {
         try {
+            this.file.getParentFile().mkdirs();
             this.mapper.writeValue(this.file, this);
         } catch (IOException e) {
             e.printStackTrace();

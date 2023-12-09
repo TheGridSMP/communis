@@ -3,4 +3,4 @@ version: '${version}'
 main: the.grid.smp.communis.Communis
 api-version: '1.18'
 libraries:
-  - com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0
+  - com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.0
