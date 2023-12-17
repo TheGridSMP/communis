@@ -1,7 +1,6 @@
 package the.grid.smp.communis.config;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -11,17 +10,16 @@ import java.io.IOException;
 
 public abstract class Config {
 
+    private final Plugin plugin;
     private final File file;
     private FileConfiguration config;
 
     public Config(Plugin plugin, String name) {
-        this(new File(plugin.getDataFolder(), name.endsWith(".yml")
-                || name.endsWith(".yaml") ? name : name + ".yml")
-        );
-    }
+        if (!name.endsWith(".yml") && !name.endsWith(".yaml"))
+            name += ".yml";
 
-    public Config(File file) {
-        this.file = file;
+        this.plugin = plugin;
+        this.file = new File(plugin.getDataFolder(), name);
         this.reload();
     }
 
@@ -29,24 +27,22 @@ public abstract class Config {
     public abstract void write(ConfigurationSection section);
 
     public void reload() {
-        try {
-            if (!this.file.exists())
-                this.save();
+        if (!this.file.exists())
+            this.save();
 
-            this.config = new YamlConfiguration();
-            this.config.load(this.file);
-
-            this.read(this.config);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
+        this.config = YamlConfiguration.loadConfiguration(this.file);
+        this.read(this.config);
     }
 
     public void save() {
         try {
             this.file.getParentFile().mkdirs();
-            this.write(this.config);
+            this.plugin.saveResource(this.file.getName(), false);
 
+            if (this.config == null)
+                this.reload();
+
+            this.write(this.config);
             this.config.save(this.file);
         } catch (IOException e) {
             e.printStackTrace();
