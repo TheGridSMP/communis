@@ -1,16 +1,18 @@
 package the.grid.smp.communis.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import the.grid.smp.communis.util.Util;
 
 import java.io.File;
 import java.io.IOException;
 
 public abstract class Config {
 
-    private final ObjectMapper mapper;
     private final File file;
+    private FileConfiguration config;
 
     public Config(Plugin plugin, String name) {
         this(new File(plugin.getDataFolder(), name.endsWith(".yml")
@@ -20,20 +22,22 @@ public abstract class Config {
 
     public Config(File file) {
         this.file = file;
-        this.mapper = Util.createMapper(this.serializers(), this.deserializers());
+        this.reload();
     }
 
-    public Serializer<?>[] serializers() { return null; }
-    public Deserializer<?>[] deserializers() { return null; }
+    public abstract void read(ConfigurationSection section);
+    public abstract void write(ConfigurationSection section);
 
     public void reload() {
         try {
-            if (!this.file.exists()) {
+            if (!this.file.exists())
                 this.save();
-            }
 
-            this.mapper.readValue(this.file, this.getClass());
-        } catch (IOException e) {
+            this.config = new YamlConfiguration();
+            this.config.load(this.file);
+
+            this.read(this.config);
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
@@ -41,7 +45,9 @@ public abstract class Config {
     public void save() {
         try {
             this.file.getParentFile().mkdirs();
-            this.mapper.writeValue(this.file, this);
+            this.write(this.config);
+
+            this.config.save(this.file);
         } catch (IOException e) {
             e.printStackTrace();
         }

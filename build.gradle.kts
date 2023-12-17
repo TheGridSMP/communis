@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "the.grid.smp"
-version = "1.5.1"
+version = "1.6.0"
 
 repositories {
     mavenCentral()
@@ -14,7 +14,6 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
-    compileOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.0")
 }
 
 publishing {

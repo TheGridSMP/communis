@@ -3,8 +3,6 @@ package the.grid.smp.communis.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import the.grid.smp.communis.config.Deserializer;
-import the.grid.smp.communis.config.Serializer;
 
 public class Util {
 
