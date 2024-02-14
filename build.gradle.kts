@@ -28,6 +28,10 @@ publishing {
             }
         }
 
+        maven {
+            url = uri("https://jitpack.io")
+        }
+
         mavenLocal()
     }
 
